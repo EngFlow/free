@@ -41,12 +41,74 @@ to run remote actions in a recent Ubuntu container.
 
 ## Configuration
 
+### Data and log storage
+
 EngFlow stores its caches and logs in the location pointed to by the `$DATA_DIR`
 environmental variable. Mount this location onto the host to preserve data
 across container invocations and view the service logs. If remote execution is
 used, `$DATA_DIR` must have the same path on the host and in the
 container. Additionally, the Docker Unix socket must be mounted into the
 container to allow EngFlow to execute actions in Docker containers.
+
+### Setting up .bazelrc and using a custom Docker image
+
+If you wish to use a custom image for a specific workspace add the following to
+the **WORKSPACE** file:
+```
+git_repository(
+    name = "bazel_toolchains",
+    commit = "df2a96686c9751096f494d10c503426944942339",
+    remote = "https://github.com/bazelbuild/bazel-toolchains.git",
+)
+
+load("@bazel_toolchains//rules:rbe_repo.bzl", "rbe_autoconfig")
+rbe_autoconfig(
+    name = "engflow_remote_config",
+    detect_java_home = False,
+    digest = "sha256:5464e3e83dc656fc6e4eae6a01f5c2645f1f7e95854b3802b85e86484132d90e",
+    java_home = "/usr/lib/jvm/java-11-openjdk-amd64",
+    registry = "marketplace.gcr.io",
+    repository = "google/rbe-ubuntu16-04",
+)
+```
+Note that this example using the google/rbe-ubuntu16-04 image from GCR
+Marketplace. You may use whatever image you'd like by changing the
+rbe_autoconfig accordingly.
+
+This will create a custom `@engflow_remote_config` workspace which can be
+referenced via Bazel command line flags. It is reccomended that you add the
+configuration to your **.bazelrc** like so:
+
+```
+build:re --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+build:re --crosstool_top=@engflow_remote_config//cc:toolchain
+build:re --extra_execution_platforms=@engflow_remote_config//config:platform
+build:re --extra_toolchains=@engflow_remote_config//config:cc-toolchain
+build:re --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_java11
+build:re --host_javabase=@engflow_remote_config//java:jdk
+build:re --host_platform=@engflow_remote_config//config:platform
+build:re --java_toolchain=@bazel_tools//tools/jdk:toolchain_java11
+build:re --javabase=@engflow_remote_config//java:jdk
+build:re --platforms=@engflow_remote_config//config:platform
+```
+
+Then you can add the remote execution options to your **.bazelrc**:
+```
+build:engflow --config=re
+build:engflow --remote_executor=grpc://localhost:8080
+build:engflow --bes_backend=grpc://localhost:8080/
+build:engflow --bes_results_url=http://localhost:8080/invocation/
+```
+
+Now you can execute against your locally running EngFlow instance by simply
+adding `--config=engflow` to your build and test commands like so:
+```
+bazel test //... --config=engflow
+```
+
+**Warning:** The rbe_autoconfig workspace rule will add about a minute to new
+builds run after `bazel clean`. Contact us for details about how to avoid this
+extra delay!
 
 ## Bug reports and support
 
