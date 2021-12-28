@@ -55,6 +55,7 @@ container to allow EngFlow to execute actions in Docker containers.
 If you wish to use a custom image for a specific workspace add the following to
 the **WORKSPACE** file:
 ```
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 git_repository(
     name = "bazel_toolchains",
     commit = "df2a96686c9751096f494d10c503426944942339",
