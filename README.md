@@ -73,8 +73,8 @@ rbe_autoconfig(
 )
 ```
 Note that this example using the google/rbe-ubuntu16-04 image from GCR
-Marketplace. You may use whatever image you'd like by changing the
-rbe_autoconfig accordingly.
+Marketplace. You may use any image by changing the
+`rbe_autoconfig` rule accordingly.
 
 This will create a custom `@engflow_remote_config` workspace which can be
 referenced via Bazel command line flags. It is reccomended that you add the
