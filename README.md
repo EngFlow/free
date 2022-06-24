@@ -48,11 +48,12 @@ used, `$DATA_DIR` must have the same path on the host and in the
 container. Additionally, the Docker Unix socket must be mounted into the
 container to allow EngFlow to execute actions in Docker containers.
 
-The size of disk dedicated to the CAS will be auto-calculated, if you find you are running
-out of space you can pass --disk_size={desired_size} to allocate more diskspace. 
+The size of disk dedicated to the CAS will be automatically calculated; it may
+be manually specified with the `--disk_size` flag.
 
-The --default_replicate_timeout (default 24h) should be set to 2x the longest build time in your
-workflows to ensure the garbage collector can work efficiently to reclaim disk space.
+The `--default_replicate_timeout` flag should be set to twice the longest build
+time to ensure the garbage collector can work efficiently to reclaim disk
+space. It defaults to 24 hours.
 
 ## Bug reports and support
 
