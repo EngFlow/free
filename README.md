@@ -30,7 +30,11 @@ repository](https://github.com/engflow/example):
 Bazel should print a URL to view the EngFlow build UI for the build in a web
 browser.
 
-EngFlow requires a Docker image to execute remote actions in. The EngFlow
+EngFlow requires a Docker image to execute remote actions in, else the following error occurs:
+```
+ERROR: ... (Exit 34): INVALID_ARGUMENT: No matching action runner found (available: com.engflow.re.exec.docker.CachedDockerActionRunner@c4bf93d,com.engflow.re.exec.docker.DockerActionRunner@28c06c4), client-provided platform proto:
+```
+The EngFlow
 example repository configures the image using the `rbe_autoconfig` workspace
 rule from
 [bazel-toolchains](https://github.com/bazelbuild/bazel-toolchains). For simple
