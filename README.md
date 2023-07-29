@@ -9,7 +9,7 @@ protocol clients such as [Bazel](https://bazel.build).
 EngFlow Free Tier may be used a remote cache and UI for any Bazel build. It can
 also execute remote actions in a Linux Docker container.
 
-## Getting started
+## Getting Started
 
 EngFlow Free Tier is distributed as a Docker image for x86_64 Linux. The images
 are hosted by the [GitHub container
@@ -42,6 +42,23 @@ usecases, an image may be passed via Bazel's `--remote_default_exec_properties`
 flag. For instance,
 `--remote_default_exec_properties=container-image=docker://docker.io/ubuntu:focal-20210827`
 to run remote actions in a recent Ubuntu container.
+
+## Getting Started w/ Docker Compose
+
+EngFlow Free Tier may be started as a service through Docker Compose.  A sample configuration of EngFlow 
+deployed as a service is demonstrated in the ```docker-compose.yml``` file included in this repository.
+The example demonstrates the configuration of the EngFlow remote execution service to use containers for
+both local execution and remote runtime workers.
+
+To start the EngFlow Free Tier and run build targets from the EngFlow example project, simply execute the 
+following command from the top-level directory of this repository:
+
+```commandline
+docker-compose up
+```
+
+EngFlow Free Tier can be deployed easily to various cloud providers through Docker Compose or directly as a container
+through Kubernetes, Amazon ECS, Azure Container Apps, Google Cloud Run and any other OCI-compatible container platform.
 
 ## Configuration
 
