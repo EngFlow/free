@@ -1,0 +1,42 @@
+version: "3"
+services:
+
+  engflow:
+    image: ghcr.io/engflow/free:2.8.0
+    container_name: engflow
+    environment:
+      - DATA_DIR=/tmp/engflow_data
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/tmp/engflow_data:/tmp/engflow_data"
+
+  registry:
+    network_mode: host
+    image: registry:2
+    environment:
+      REGISTRY_HTTP_ADDR: 0.0.0.0:5443
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/.htpasswd
+    volumes:
+      - ./registry/certs:/certs
+      - ./registry/auth:/auth
+
+  example:
+    network_mode: host
+    build:
+      context: .
+      dockerfile: ./example/Dockerfile
+
+    depends_on:
+      - registry
+      - engflow
+    volumes:
+      - ./example/etc/docker/certs.d:/etc/docker/certs.d
+      - ./registry/certs:/certs
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  engflow: {}

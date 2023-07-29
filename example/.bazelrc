@@ -1,0 +1,5 @@
+build:engflow --remote_executor=grpc://localhost:8080
+build:engflow --remote_cache=grpc://localhost:8080
+build:engflow --bes_backend=grpc://localhost:8080
+build:engflow --bes_results_url=http://localhost:8080/invocation/
+build:engflow --remote_default_exec_properties=container-image=localhost:5443/engflow/worker
